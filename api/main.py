@@ -1,10 +1,17 @@
 from fastapi import FastAPI, Depends
 from config.database import connect_db, close_db
 from api.dependencies import get_database
+from api.routers import auth, classify 
 
 app = FastAPI(title="CashFlow Compass")
 
-# Startup and shutdown events
+app.include_router(auth.router, prefix="/api")
+app.include_router(classify.router, prefix="/api")
+# app.include_router(recommend.router, prefix="/api")
+# app.include_router(actions.router, prefix="/api")
+# app.include_router(risk.router, prefix="/api")
+# app.include_router(notifications.router, prefix="/api")
+
 @app.on_event("startup")
 async def startup_event():
     connect_db()
@@ -13,9 +20,7 @@ async def startup_event():
 async def shutdown_event():
     close_db()
 
-# Test route with MongoDB
 @app.get("/")
 async def root(db=Depends(get_database)):
-    # Test MongoDB connection
     db.command("ping")
     return {"message": "Welcome to CashFlow Compass! MongoDB is connected."}
