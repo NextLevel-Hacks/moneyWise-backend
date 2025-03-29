@@ -1,5 +1,6 @@
 import google.generativeai as genai
 from config.settings import settings
+import re
 
 # Configure the Gemini API
 genai.configure(api_key=settings.GEMINI_API_KEY)
@@ -19,8 +20,16 @@ class ChatbotService:
             )
         )
 
+    def clean_response(self, text: str) -> str:
+        text = re.sub(r'\*\*', '', text)  
+        text = re.sub(r'\*', '', text)    
+        text = re.sub(r'#+', '', text)    
+        text = re.sub(r'- ', '', text)    
+        text = re.sub(r'\n+', '\n', text)  
+        text = re.sub(r'\s+', ' ', text)   
+        return text.strip()  
+
     def get_response(self, user_id: str, message: str, db) -> str:
-        # Fetch user data to provide context
         transaction_summary = db["transactions"].find_one({"user_id": user_id})
         insights = db["insights"].find_one({"user_id": user_id})
 
@@ -43,10 +52,10 @@ class ChatbotService:
         # Combine context and user message
         prompt = f"{context}\nUser question: {message}"
 
-        # Get response from Gemini
         try:
             response = self.model.generate_content(prompt)
-            return response.text
+            cleaned_response = self.clean_response(response.text)
+            return cleaned_response
         except Exception as e:
             return f"Error generating response: {str(e)}"
 
