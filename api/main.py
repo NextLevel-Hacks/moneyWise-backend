@@ -1,9 +1,19 @@
 from fastapi import FastAPI, Depends
+from fastapi.middleware.cors import CORSMiddleware
 from config.database import connect_db, close_db
 from api.dependencies import get_database
 from api.routers import auth, classify 
 
 app = FastAPI(title="CashFlow Compass")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  
+    allow_credentials=True,
+    allow_methods=["*"],  
+    allow_headers=["*"],  
+)
+
 
 app.include_router(auth.router, prefix="/api")
 app.include_router(classify.router, prefix="/api")
