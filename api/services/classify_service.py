@@ -1,19 +1,17 @@
 from api.models.transaction import Transaction
 from api.models.user import UserProfile
+import random
 
 class ClassifyService:
-    def classify(self, transactions: list[Transaction]) -> str:
-        # Mock: Simple rule-based classification (replace with model later)
-        total_income = sum(t.amount for t in transactions if t.category == "salary")
-        total_spending = abs(sum(t.amount for t in transactions if t.amount < 0))
-        
-        if total_income > 1000 and total_spending < 200:
-            return "HILS"
-        elif total_income <= 1000 and total_spending >= 800:
-            return "LIHS"
-        elif total_income > 1000 and total_spending >= 800:
-            return "HIHS"
-        else:
-            return "LILS"
+    def classify(self, user_id: str) -> dict:
+        # Mock: Pretend we analyzed transactions, return random spender type
+        spender_types = [
+            {"type": "HILS", "summary": "You’re a saver! You earn a lot but spend little."},
+            {"type": "LIHS", "summary": "You’re a big spender on a tight budget."},
+            {"type": "HIHS", "summary": "You earn big and spend big—living large!"},
+            {"type": "LILS", "summary": "You’re cautious, keeping both income and spending low."}
+        ]
+        result = random.choice(spender_types)
+        return {"user_id": user_id, "spender_type": result["type"], "summary": result["summary"]}
 
 classify_service = ClassifyService()

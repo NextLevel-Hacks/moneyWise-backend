@@ -1,25 +1,39 @@
 from fastapi import APIRouter, Depends
-from api.dependencies import get_database
-from api.models.transaction import Transaction
-from api.models.user import UserProfile
+from api.dependencies import get_database, get_current_user
+from api.services.classify_service import classify_service
+from api.services.insights_service import insights_service
+from api.models.insights import InsightsResponse
 
 router = APIRouter()
 
-@router.post("/users/{user_id}/classify")
+@router.post("/users/{user_id}/classify", response_model=InsightsResponse)
 async def classify_spender(
     user_id: str,
-    transactions: list[Transaction],
-    db=Depends(get_database)
+    db=Depends(get_database),
+    current_user=Depends(get_current_user)
 ):
-    # Dummy classification (replace with AI model later)
-    spender_type = "HILS"  # Placeholder
-    profile = {"user_id": user_id, "spender_type": spender_type}
+    # Mocked classification
+    classification = classify_service.classify(user_id)
     
-    # Save to MongoDB
+    # Save classification to MongoDB
     db["user_profiles"].update_one(
         {"user_id": user_id},
-        {"$set": profile},
+        {"$set": classification},
         upsert=True
     )
     
-    return UserProfile(**profile)
+    # Generate AI insights (mocked LLM)
+    insights = insights_service.generate_insights(
+        user_id=user_id,
+        spender_type=classification["spender_type"],
+        summary=classification["summary"]
+    )
+    
+    # Save insights to MongoDB (optional for PoC)
+    db["insights"].update_one(
+        {"user_id": user_id},
+        {"$set": insights.dict()},
+        upsert=True
+    )
+    
+    return insights
