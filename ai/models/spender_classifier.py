@@ -1,1 +1,1 @@
-# spending classifier
+# spending classif
