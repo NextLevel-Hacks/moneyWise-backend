@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.security import OAuth2PasswordRequestForm
-from api.dependencies import get_database
+from api.dependencies import get_database, get_current_user
 from api.models.user import UserCreate, Token
 from api.services.auth_service import auth_service
 from pydantic import BaseModel
@@ -27,3 +26,17 @@ async def login(login_data: LoginRequest, db=Depends(get_database)):
         return token
     except ValueError as e:
         raise HTTPException(status_code=401, detail=str(e))
+
+@router.get('/auth/me')
+async def get_user_details(current_user=Depends(get_current_user), db=Depends(get_database)):
+    user = db["users"].find_one({"email": current_user["email"]})
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    return {
+        "first_name": user["first_name"],
+        "last_name": user["last_name"],
+        "email": user["email"],
+        "id": str(user["_id"]),
+    }
