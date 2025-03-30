@@ -4,7 +4,7 @@ from api.services.classify_service import classify_service
 from api.services.insights_service import insights_service
 from api.models.insights import InsightsResponse
 
-router = APIRouter()
+router = APIRouter(tags=["Classifier"])
 
 @router.post("/users/{user_id}/classify", response_model=InsightsResponse)
 async def classify_spender(

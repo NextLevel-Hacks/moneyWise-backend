@@ -3,7 +3,7 @@ from api.dependencies import get_database, get_current_user
 from api.services.transaction_service import transaction_service
 from api.models.transaction import TransactionSummary
 
-router = APIRouter()
+router = APIRouter(tags=["Transaction"])
 
 @router.post("/users/{user_id}/connect-account", response_model=TransactionSummary)
 async def connect_account(

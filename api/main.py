@@ -2,7 +2,8 @@ from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from config.database import connect_db, close_db
 from api.dependencies import get_database
-from api.routers import auth, classify, transaction
+from api.routers import auth, classify, transaction, users, chat
+
 
 app = FastAPI(title="CashFlow Compass")
 
@@ -18,9 +19,10 @@ app.add_middleware(
 app.include_router(auth.router, prefix="/api")
 app.include_router(classify.router, prefix="/api")
 app.include_router(transaction.router, prefix='/api')
+app.include_router(users.router, prefix="/api")
 # app.include_router(recommend.router, prefix="/api")
 # app.include_router(actions.router, prefix="/api")
-# app.include_router(risk.router, prefix="/api")
+app.include_router(chat.router, prefix="/api")
 # app.include_router(notifications.router, prefix="/api")
 
 @app.on_event("startup")
