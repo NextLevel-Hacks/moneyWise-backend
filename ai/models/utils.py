@@ -1,4 +1,4 @@
-import joblib
+# import joblib
 from locale import normalize
 import pandas as pd
 from sklearn.cluster import KMeans
@@ -22,15 +22,15 @@ def run_cc_pca_model(data):
 
 
 
-def save_params(filepath,model):
-  try:
-    joblib.dump(model, filepath)
-  except Exception as e:
-    print(f"An error occurred: {e}")
+# def save_params(filepath,model):
+#   try:
+#     joblib.dump(model, filepath)
+#   except Exception as e:
+#     print(f"An error occurred: {e}")
 
-def load_params(filepath):
-  try:
-    model = joblib.load(filepath)
-    return model
-  except Exception as e:
-    print(f"An error occurred: {e}")
+# def load_params(filepath):
+#   try:
+#     model = joblib.load(filepath)
+#     return model
+#   except Exception as e:
+#     print(f"An error occurred: {e}")
